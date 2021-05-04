@@ -1,0 +1,30 @@
+<?xml version="1.0" standalone="yes"?>
+<dsNetFTCalibrationFile>
+  <tblNetFTCalibrationInfo>
+    <SerialNumber>FT10484</SerialNumber>
+    <BodyStyle>Mini45</BodyStyle>
+    <CalibrationPartNumber>SI-580-20</CalibrationPartNumber>
+    <Family>Net F/T</Family>
+    <CalibrationDate>2017-07-06T14:50:23.6111644-04:00</CalibrationDate>
+    <MatrixFX>10.0835582505743 114.459547519714 980.330335037801 -31561.5307505607 1061.32635761539 31461.1601035356 </MatrixFX>
+    <MatrixFy>-1084.03835666541 35437.2110894028 460.27183787792 -18530.149914928 -255.517815881489 -17976.0889843265 </MatrixFy>
+    <MatrixFz>37692.0270770521 24.8279540123593 40565.9105089145 -2225.79045105494 38187.8588740251 -319.026032952114 </MatrixFz>
+    <MatrixTx>-26.1841022796852 247.507590537355 -638.468458054663 -92.0704656479622 627.375533458135 -129.739673774389 </MatrixTx>
+    <MatrixTy>715.795266091964 1.51704257818286 -395.8054294837 236.248110408701 -370.835900969426 -209.27222516212 </MatrixTy>
+    <MatrixTz>14.188035260117 -435.510512290952 15.2161440869524 -448.583974131499 -15.3689784348311 -456.047460327576 </MatrixTz>
+    <GaugeGains>563 631 607 661 565 633 </GaugeGains>
+    <GaugeOffsets>35384 32400 33906 34928 34752 29684 </GaugeOffsets>
+    <CalibrationIndex>0</CalibrationIndex>
+  </tblNetFTCalibrationInfo>
+  <tblCalibrationInformation>
+    <CalibrationPartNumber>SI-580-20</CalibrationPartNumber>
+    <ForceUnits>N</ForceUnits>
+    <TorqueUnits>N-m</TorqueUnits>
+    <CountsPerForce>1000000</CountsPerForce>
+    <CountsPerTorque>1000000</CountsPerTorque>
+    <MaxRatings>580 580 1160 20 20 20 </MaxRatings>
+    <Resolutions>24 24 24 24 24 24</Resolutions>
+    <Ranges>24 24 24 24 24 24</Ranges>
+    <_x0031_6BitScaleFactors>35402 35402 35402 611 611 611 </_x0031_6BitScaleFactors>
+  </tblCalibrationInformation>
+</dsNetFTCalibrationFile>

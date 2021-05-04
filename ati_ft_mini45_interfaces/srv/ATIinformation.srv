@@ -1,0 +1,7 @@
+---
+string serial_number
+string firmware_version
+int32 counts_per_force
+int32 counts_per_torque
+string force_unit
+string torque_unit

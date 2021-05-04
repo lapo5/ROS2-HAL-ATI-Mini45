@@ -1,0 +1,8 @@
+float32 bias_fx
+float32 bias_fy
+float32 bias_fz
+float32 bias_tx
+float32 bias_ty
+float32 bias_tz
+---
+bool ret
