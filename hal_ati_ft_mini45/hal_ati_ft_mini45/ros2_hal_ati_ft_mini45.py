@@ -30,11 +30,12 @@ from ati_ft_mini45_interfaces.srv import BiasesComputed
 from ati_ft_mini45_interfaces.srv import CalibrationMatrix   
 from ati_ft_mini45_interfaces.srv import SetBiases   
 
+from ament_index_python.packages import get_package_share_directory
 
 class HalAtiFTMini45(Node):
 
     def __init__(self):
-        super().__init__('minimal_publisher')
+        super().__init__('hal_ati_ft_node')
 
         self.hal_ft_sensor = HAL_ATI_FT_Mini45()
 
@@ -63,7 +64,9 @@ class HalAtiFTMini45(Node):
         do_calibration = False
         self.hal_ft_sensor.init(do_calibration=do_calibration)
 
-        self.calib_filename = '/home/marco/ros2_devel/src/hal_ati_ft_mini45/hal_ati_ft_mini45/FT10484_Net.xml'
+        package_share_directory = get_package_share_directory('hal_ati_ft_mini45')
+        self.calib_filename = package_share_directory + '/resources/FT10484_Net.xml'
+        
         self.hal_ft_sensor.parse_calibration_XML(self.calib_filename)
 
 
@@ -148,16 +151,21 @@ class HalAtiFTMini45(Node):
 
 def main(args=None):
     rclpy.init(args=args)
+    node = HalAtiFTMini45()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        print('ATI FT Node stopped cleanly')
+        node.exit()
+    except BaseException:
+        print('Exception in ATI FT Node:', file=sys.stderr)
+        raise
+    finally:
+        # Destroy the node explicitly
+        # (optional - Done automatically when node is garbage collected)
+        node.destroy_node()
+        rclpy.shutdown() 
 
-    minimal_publisher = HalAtiFTMini45()
-
-    rclpy.spin(minimal_publisher)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
-    minimal_publisher.destroy_node()
-    rclpy.shutdown()
 
 
 if __name__ == '__main__':
