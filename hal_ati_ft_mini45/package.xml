@@ -3,9 +3,9 @@
 <package format="3">
   <name>hal_ati_ft_mini45</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="marco.lapolla5@gmail.com">marco</maintainer>
-  <license>TODO: License declaration</license>
+  <description>HAL for ATI Force/Torque Sensor Mini45</description>
+  <maintainer email="marco.lapolla5@gmail.com">Marco Lapolla</maintainer>
+  <license>BSD</license>
   
   <exec_depend>ati_ft_mini45_interfaces</exec_depend>
   <exec_depend>rclpy</exec_depend>
