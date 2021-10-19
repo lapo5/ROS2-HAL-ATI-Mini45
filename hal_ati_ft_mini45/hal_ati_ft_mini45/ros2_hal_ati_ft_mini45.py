@@ -1,68 +1,85 @@
-# Copyright 2016 Open Source Robotics Foundation, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+import sys
+import os
 
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String, Header
-
+from std_msgs.msg import Header
 from std_srvs.srv import Empty
+from geometry_msgs.msg import WrenchStamped
 
-import sys
-import os
+from ament_index_python.packages import get_package_share_directory
 
 # Include parent directory, to make it possible to include Stanalone HAL Module
 from . HAL_ATI_FT_Mini45 import HAL_ATI_FT_Mini45
-from ati_ft_mini45_interfaces.msg import FT  
-from ati_ft_mini45_interfaces.srv import ATIinformation   
-from ati_ft_mini45_interfaces.srv import BiasesComputed   
-from ati_ft_mini45_interfaces.srv import CalibrationMatrix   
-from ati_ft_mini45_interfaces.srv import SetBiases   
 
-from ament_index_python.packages import get_package_share_directory
+from ati_ft_mini45_interfaces.srv import ATIinformation, BiasesComputed, CalibrationMatrix, SetBiases
 
 class HalAtiFTMini45(Node):
 
     def __init__(self):
         super().__init__('hal_ati_ft_node')
 
-        self.hal_ft_sensor = HAL_ATI_FT_Mini45()
+        self.declare_parameter("hz", "10.0")
+        self.rate = self.get_parameter("hz").value
 
-        self.publisher_ = self.create_publisher(FT, '/ati_ft_mini45/ft_measures', 10)    
-        timer_period = 0.5
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.declare_parameter("services.get_information", "/ati_ft_mini45/get_information")
+        self.get_information_service_name = self.get_parameter("services.get_information").value
+
+        self.declare_parameter("services.get_biases", "/ati_ft_mini45/get_biases")
+        self.get_biases_service_name = self.get_parameter("services.get_biases").value
+
+        self.declare_parameter("services.get_calibration_matrix", "/ati_ft_mini45/get_calibration_matrix")
+        self.get_calibration_matrix_service_name = self.get_parameter("services.get_calibration_matrix").value
+
+        self.declare_parameter("services.set_biases", "/ati_ft_mini45/set_biases")
+        self.set_biases_service_name = self.get_parameter("services.set_biases").value
+
+        self.declare_parameter("services.compute_calibration", "/ati_ft_mini45/compute_calibration")
+        self.compute_calibration_service_name = self.get_parameter("services.compute_calibration").value
+
+        self.declare_parameter("services.compute_bias", "/ati_ft_mini45/compute_bias")
+        self.compute_bias_service_name = self.get_parameter("services.compute_bias").value
+
+        self.declare_parameter("frames.ft_sensor", "ati_ft_link")
+        self.ft_link = self.get_parameter("frames.ft_sensor").value
+
+        self.declare_parameter("publishers.ft_measures", "/ati_ft_mini45/ft_measures")
+        self.pub_ft_measures_name = self.get_parameter("publishers.ft_measures").value
+
+        self.publisher_ = self.create_publisher(WrenchStamped, self.pub_ft_measures_name, 1)    
+
+        self.timer = self.create_timer(1.0/self.rate, self.timer_callback)
 
         self.srv_get_info = self.create_service(ATIinformation, 
-                                        '/ati_ft_mini45/get_information', self.get_information)
+                                        self.get_information_service_name, self.get_information)
 
         self.ser_biases_computed = self.create_service(BiasesComputed, 
-                                        '/ati_ft_mini45/get_biases', self.get_biases)
+                                        self.get_biases_service_name, self.get_biases)
 
         self.ser_get_calib_matrix = self.create_service(CalibrationMatrix, 
-                                        '/ati_ft_mini45/get_calibration_matrix', self.get_calibration_matrix)
+                                        self.get_calibration_matrix_service_name, self.get_calibration_matrix)
 
         self.ser_set_biases = self.create_service(SetBiases, 
-                                        '/ati_ft_mini45/set_biases', self.set_biases)
+                                        self.set_biases_service_name, self.set_biases)
 
         self.ser_compute_calibration = self.create_service(Empty, 
-                                        '/ati_ft_mini45/compute_calibration', self.compute_calibration)
+                                        self.compute_calibration_service_name, self.compute_calibration)
 
         self.ser_compute_bias = self.create_service(Empty, 
-                                        '/ati_ft_mini45/compute_bias', self.compute_bias)
+                                        self.compute_bias_service_name, self.compute_bias)
 
-        do_calibration = False
-        self.hal_ft_sensor.init(do_calibration=do_calibration)
+
+        self.bus_type = "socketcan"
+
+        self.declare_parameter("channel", "can0")
+        self.channel = self.get_parameter("channel").value
+
+        self.declare_parameter("calibrate_sensors_on_start", "False")
+        self.do_calibration = self.get_parameter("calibrate_sensors_on_start").value
+
+        self.hal_ft_sensor = HAL_ATI_FT_Mini45(bustype=self.bus_type, channel=self.channel)
+        self.hal_ft_sensor.init(do_calibration=self.do_calibration)
 
         package_share_directory = get_package_share_directory('hal_ati_ft_mini45')
         self.calib_filename = package_share_directory + '/resources/FT10484_Net.xml'
@@ -135,17 +152,19 @@ class HalAtiFTMini45(Node):
         if not self.hal_ft_sensor.is_calibrated or not self.hal_ft_sensor.bias_computed:
             pass
         else:
-            msg = FT()   
-            forces_torques = self.hal_ft_sensor.get_force_torque()   
+            msg = WrenchStamped()   
             msg.header = Header()
             msg.header.stamp = self.get_clock().now().to_msg()
-            msg.header.frame_id = "ATI_FT_Mini45"                              
-            msg.fx = float(forces_torques[0])                                      
-            msg.fy = float(forces_torques[1])                           
-            msg.fz = float(forces_torques[2])                           
-            msg.tx = float(forces_torques[3])                           
-            msg.ty = float(forces_torques[4])                           
-            msg.tz = float(forces_torques[5])                        
+            msg.header.frame_id = self.ft_link
+
+            forces_torques = self.hal_ft_sensor.get_force_torque()   
+                                 
+            msg.wrench.force.x = float(forces_torques[0])                                      
+            msg.wrench.force.y = float(forces_torques[1])                           
+            msg.wrench.force.z = float(forces_torques[2])                           
+            msg.wrench.torque.x = float(forces_torques[3])                           
+            msg.wrench.torque.y = float(forces_torques[4])                           
+            msg.wrench.torque.z = float(forces_torques[5])                        
             self.publisher_.publish(msg)
 
 
@@ -163,7 +182,6 @@ def main(args=None):
     finally:
         # Destroy the node explicitly
         # (optional - Done automatically when node is garbage collected)
-        node.destroy_node()
         rclpy.shutdown() 
 
 

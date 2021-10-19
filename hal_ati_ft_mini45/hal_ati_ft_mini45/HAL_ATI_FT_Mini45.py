@@ -16,9 +16,9 @@ import ast
 from xml.etree import ElementTree as ET
 
 class HAL_ATI_FT_Mini45:
-    def __init__(self):
-        self.bustype = 'socketcan'
-        self.channel = 'can0'
+    def __init__(self, bustype='socketcan', channel='can0'):
+        self.bustype = bustype
+        self.channel = channel
 
         self.bias_computed = False
 

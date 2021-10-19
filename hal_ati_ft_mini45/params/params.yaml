@@ -1,0 +1,21 @@
+pasqua_parking:
+  ros__parameters:
+
+    hz: 10.0
+    channel: can0
+
+    calibrate_sensors_on_start: False
+    
+    publishers:
+      ft_measures: /ati_ft_mini45/ft_measures
+        
+    services:
+      get_information: /ati_ft_mini45/get_information
+      get_biases: /ati_ft_mini45/get_biases
+      get_calibration_matrix: /ati_ft_mini45/get_calibration_matrix
+      set_biases: /ati_ft_mini45/set_biases
+      compute_calibration: /ati_ft_mini45/compute_calibration
+      compute_bias: /ati_ft_mini45/compute_bias
+
+    frames:
+      ft_sensor: ati_ft_link

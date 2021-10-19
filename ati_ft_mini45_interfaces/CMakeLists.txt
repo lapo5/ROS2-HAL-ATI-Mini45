@@ -24,7 +24,6 @@ find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/FT.msg"
   "srv/ATIinformation.srv"
   "srv/BiasesComputed.srv"
   "srv/CalibrationMatrix.srv"
