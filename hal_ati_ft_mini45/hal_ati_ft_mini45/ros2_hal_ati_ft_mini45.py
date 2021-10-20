@@ -21,7 +21,7 @@ class HalAtiFTMini45(Node):
         super().__init__('hal_ati_ft_node')
 
         self.declare_parameter("hz", "10.0")
-        self.rate = self.get_parameter("hz").value
+        self.rate = float(self.get_parameter("hz").value)
 
         self.declare_parameter("services.get_information", "/ati_ft_mini45/get_information")
         self.get_information_service_name = self.get_parameter("services.get_information").value
@@ -150,7 +150,7 @@ class HalAtiFTMini45(Node):
     def timer_callback(self):
 
         if not self.hal_ft_sensor.is_calibrated or not self.hal_ft_sensor.bias_computed:
-            pass
+            print('FT Not Calibrated')
         else:
             msg = WrenchStamped()   
             msg.header = Header()
@@ -175,7 +175,6 @@ def main(args=None):
         rclpy.spin(node)
     except KeyboardInterrupt:
         print('ATI FT Node stopped cleanly')
-        node.exit()
     except BaseException:
         print('Exception in ATI FT Node:', file=sys.stderr)
         raise

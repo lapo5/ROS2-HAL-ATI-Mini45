@@ -4,7 +4,7 @@ pasqua_parking:
     hz: 10.0
     channel: can0
 
-    calibrate_sensors_on_start: False
+    calibrate_sensors_on_start: True
     
     publishers:
       ft_measures: /ati_ft_mini45/ft_measures
