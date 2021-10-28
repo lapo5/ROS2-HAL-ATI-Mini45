@@ -49,8 +49,6 @@ class HalAtiFTMini45(Node):
 
         self.publisher_ = self.create_publisher(WrenchStamped, self.pub_ft_measures_name, 1)    
 
-        self.timer = self.create_timer(1.0/self.rate, self.timer_callback)
-
         self.srv_get_info = self.create_service(ATIinformation, 
                                         self.get_information_service_name, self.get_information)
 
@@ -85,6 +83,9 @@ class HalAtiFTMini45(Node):
         self.calib_filename = package_share_directory + '/resources/FT10484_Net.xml'
         
         self.hal_ft_sensor.parse_calibration_XML(self.calib_filename)
+
+
+        self.timer = self.create_timer(1.0/self.rate, self.timer_callback)
 
 
     def get_information(self, request, response):
@@ -149,7 +150,7 @@ class HalAtiFTMini45(Node):
 
     def timer_callback(self):
 
-        if not self.hal_ft_sensor.is_calibrated or not self.hal_ft_sensor.bias_computed:
+        if not self.hal_ft_sensor.is_calibrated:
             print('FT Not Calibrated')
         else:
             msg = WrenchStamped()   

@@ -271,9 +271,6 @@ class HAL_ATI_FT_Mini45:
         if not self.is_calibrated:
             raise Exception("Compute or Upload Calibration Matrix First")
 
-        if not self.bias_computed:
-            raise Exception('Compute Bias First')
-
         ft = np.zeros([6], dtype=np.float32)
 
         for row in range(0, 6):
