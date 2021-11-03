@@ -18,7 +18,7 @@ from ati_ft_mini45_interfaces.srv import ATIinformation, BiasesComputed, Calibra
 class HalAtiFTMini45(Node):
 
     def __init__(self):
-        super().__init__('hal_ati_ft_node')
+        super().__init__('hal_ati_ft_mini45')
 
         self.declare_parameter("hz", "10.0")
         self.rate = float(self.get_parameter("hz").value)

@@ -1,7 +1,7 @@
-pasqua_parking:
+hal_ati_ft_mini45:
   ros__parameters:
 
-    hz: 10.0
+    hz: 100.0
     channel: can0
 
     calibrate_sensors_on_start: False
