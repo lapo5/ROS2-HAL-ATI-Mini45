@@ -21,7 +21,7 @@ setup(
     zip_safe=True,
     maintainer='Marco Lapolla',
     maintainer_email='marco.lapolla5@gmail.com',
-    description='HAl for ATI FT Sensor',
+    description='HAL for ATI FT Sensor',
     license='BSD',
     entry_points={
         'console_scripts': [
